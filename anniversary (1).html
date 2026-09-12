@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Our Anniversary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     "OUR ANNIVERSARY" — a page that unwraps like a gift.
+
+     HOW TO MAKE THIS YOURS
+     Everything you need to change lives in the CONFIG object
+     inside the <script> tag near the bottom (search "EDIT ME").
+
+     PHOTOS: create an /images folder next to this file and point
+     each memory's `img` field at a file in it, e.g.
+     "images/first-date.jpg". Until you add one, a soft placeholder
+     shows instead, so the page works right away either way.
+
+     SONG: create an /audio folder, drop in an mp3, and point
+     CONFIG.song.src at it. Nothing autoplays — she presses play.
+     ============================================================ */
+
+  :root{
+    --night-1: #170e22;
+    --night-2: #2b1530;
+    --night-3: #3f1e3f;
+    --blush: #ff9fc4;
+    --blush-soft: #ffd7e6;
+    --pink-hot: #ff7ab0;
+    --gold: #f6d3a0;
+    --cream: #fdf3f6;
+    --lilac: #e3a9cf;
+    --sage: #b9c9b2;
+    --ink: #3a1a34;
+    --serif: 'Cormorant Garamond', serif;
+    --hand: 'Caveat', cursive;
+    --round: 'Quicksand', sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ margin:0; background:var(--night-1); color:var(--cream); font-family:var(--round); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+  }
+
+  #stars-bg{ position:fixed; inset:0; z-index:0; pointer-events:none; background: radial-gradient(ellipse at 50% 0%, var(--night-3), var(--night-1) 60%); }
+  #stars-bg canvas{ position:absolute; inset:0; width:100%; height:100%; }
+  #stars-bg::after{ content:''; position:absolute; inset:0; background: radial-gradient(ellipse at 50% 100%, rgba(255,122,176,0.14), transparent 55%); pointer-events:none; }
+
+  .floaty-heart{ position:fixed; bottom:-40px; pointer-events:none; z-index:1; color: var(--blush); opacity:.55; font-size: 1.1rem; animation: floaty-rise linear forwards; }
+  @keyframes floaty-rise{
+    0%{ transform: translateY(0) translateX(0) scale(.8); opacity:.55; }
+    50%{ transform: translateY(-55vh) translateX(var(--drift,12px)) scale(1); }
+    100%{ transform: translateY(-110vh) translateX(0) scale(1.1); opacity:0; }
+  }
+
+  .cursor-spark{ position:fixed; pointer-events:none; z-index:9999; font-size:13px; color: var(--pink-hot); animation: spark-fade 900ms ease-out forwards; }
+  @keyframes spark-fade{ 0%{ opacity:.85; transform:translateY(0) scale(1);} 100%{ opacity:0; transform:translateY(-22px) scale(.6);} }
+
+  section{ position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:6rem 1.5rem; text-align:center; }
+
+  .eyebrow-note{ font-family: var(--hand); color: var(--blush); font-size:1.3rem; margin-bottom:.25rem; }
+  h1,h2{ font-family: var(--serif); font-weight:600; color:var(--cream); margin:0; }
+  h1{ font-size: clamp(2rem,6vw,3.2rem); line-height:1.25; }
+  h2{ font-size: clamp(1.5rem,4vw,2.2rem); margin-bottom:1.4rem; }
+  p{ font-size:1.06rem; line-height:1.75; color: var(--blush-soft); max-width:480px; margin:.6rem auto; }
+  .serif-line{ font-family:var(--serif); font-style:italic; font-size: clamp(1.25rem,3vw,1.6rem); color:var(--cream); }
+
+  button{ font-family: var(--round); cursor:pointer; border:none; }
+  .glow-btn{ margin-top:2rem; padding:.9rem 2.1rem; border-radius:999px; background: linear-gradient(135deg, var(--pink-hot), var(--lilac)); color: #3a1a34; font-weight:600; font-size:1rem; box-shadow: 0 0 26px rgba(255,122,176,.45); transition: transform .25s ease, box-shadow .25s ease; }
+  .glow-btn:hover{ transform: translateY(-2px) scale(1.03); box-shadow: 0 0 36px rgba(255,122,176,.65); }
+  .glow-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+  .ghost-btn{ margin-top:1rem; padding:.6rem 1.4rem; border-radius:999px; background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.18); color:var(--cream); font-size:.9rem; }
+  .ghost-btn:hover{ background: rgba(255,255,255,.12); }
+
+  .fade-target{ opacity:0; transform: translateY(16px); transition: opacity .8s ease, transform .8s ease; }
+  .fade-target.in{ opacity:1; transform: translateY(0); }
+
+  /* ---------- 00 cover ---------- */
+  #cover .kicker{ letter-spacing: .12em; font-size:.8rem; color: var(--blush); }
+  #cover h1{ margin-top:.4rem; }
+  #cover .sub{ font-family: var(--hand); font-size:1.3rem; color: var(--blush-soft); margin-top:.6rem; }
+  .deco-row{ letter-spacing: .6em; color: var(--blush); opacity:.65; font-size:.9rem; margin: 1.6rem 0; }
+
+  /* ---------- 01 gift ---------- */
+  .gift-box{ font-size: 4.2rem; cursor:pointer; transition: transform .3s ease; }
+  .gift-box:hover{ transform: scale(1.08) rotate(-3deg); }
+  .gift-reveal{ max-width: 440px; margin-top: 1.8rem; opacity:0; transform: translateY(10px); transition: opacity .6s ease, transform .6s ease; }
+  .gift-reveal.show{ opacity:1; transform:translateY(0); }
+
+  /* ---------- 02 our story timeline ---------- */
+  .story-line{ position: relative; display:flex; flex-direction:column; align-items:center; gap:0; max-width: 320px; }
+  .story-node{ font-family: var(--serif); font-size:1.25rem; padding: 1rem 1.4rem; border-radius: 14px; background: rgba(255,158,196,.06); border:1px solid rgba(255,158,196,.22); cursor:pointer; transition: background .25s ease, transform .25s ease; width: 100%; }
+  .story-node:hover{ background: rgba(255,158,196,.14); transform: translateY(-2px); }
+  .story-connector{ color: var(--blush); opacity:.8; font-size:1.1rem; padding: .3rem 0; }
+  .story-detail{ max-width: 440px; margin-top:1.6rem; padding:1.5rem; background: rgba(255,158,196,.12); border:1px solid rgba(255,158,196,.35); border-radius:16px; display:none; }
+  .story-detail.show{ display:block; }
+  .story-detail .head{ font-family: var(--hand); color: var(--gold); font-size:1.35rem; }
+
+  /* ---------- 03 little things cards ---------- */
+  .card-field{ display:flex; flex-wrap:wrap; gap:1.1rem; justify-content:center; max-width: 780px; }
+  .love-card{ width:150px; min-height:118px; padding:1.2rem 1rem; background: rgba(255,158,196,.07); border:1px solid rgba(255,158,196,.24); border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem; transition: transform .3s ease, background .3s ease; }
+  .love-card:hover{ transform: translateY(-4px); background: rgba(255,158,196,.15); }
+  .love-card .emo{ font-size:1.5rem; }
+  .love-card .title{ font-family:var(--serif); font-size:1rem; }
+  .card-detail{ max-width:440px; margin-top:1.6rem; padding:1.5rem; background: rgba(255,122,176,.14); border:1px solid rgba(255,122,176,.4); border-radius:16px; display:none; }
+  .card-detail.show{ display:block; }
+  .card-detail .head{ font-family: var(--hand); color: var(--gold); font-size:1.35rem; }
+
+  /* ---------- 04 memories ---------- */
+  .polaroid-field{ display:flex; flex-wrap:wrap; gap: 2rem 1.5rem; justify-content:center; max-width:900px; padding-top:1rem; }
+  .polaroid{ background:#f6f1ea; padding:12px 12px 32px; width:160px; border-radius:3px; box-shadow: 0 14px 26px rgba(0,0,0,.4); cursor:pointer; transform: rotate(var(--r,0deg)); transition: transform .3s ease; }
+  .polaroid:hover{ transform: rotate(0deg) scale(1.04); }
+  .polaroid .shot{ width:100%; height:132px; border-radius:2px; object-fit:cover; display:block; }
+  .polaroid .placeholder-shot{ width:100%; height:132px; border-radius:2px; display:flex; align-items:center; justify-content:center; font-size:1.9rem; background: linear-gradient(135deg, var(--blush), var(--lilac)); }
+  .polaroid .cap{ font-family: var(--hand); color: var(--ink); font-size:1.05rem; text-align:center; display:block; margin-top:8px; }
+  .memory-modal{ position:fixed; inset:0; background: rgba(10,8,25,.86); backdrop-filter: blur(4px); display:none; align-items:center; justify-content:center; z-index:50; padding:1.5rem; }
+  .memory-modal.show{ display:flex; }
+  .memory-modal .box{ max-width:420px; width:100%; background:#f6f1ea; color:var(--ink); border-radius:10px; padding:1.6rem; box-shadow: 0 30px 60px rgba(0,0,0,.5); }
+  .memory-modal .shot-big{ width:100%; height:210px; object-fit:cover; border-radius:6px; margin-bottom:1rem; background: linear-gradient(135deg, var(--blush), var(--lilac)); display:flex; align-items:center; justify-content:center; font-size:2.6rem; }
+  .memory-modal .feeling{ font-size:.85rem; color:#7a6a80; margin:.2rem 0; }
+  .memory-modal .memtext{ font-family: var(--serif); font-style:italic; font-size:1.08rem; margin-top:.6rem; }
+  .memory-modal .close-x{ float:right; background:none; font-size:1.2rem; color:#8a7a86; }
+
+  /* ---------- 05 letters ---------- */
+  .ow-field{ display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; max-width:700px; }
+  .ow-env{ padding:.9rem 1.3rem; border-radius:12px; background: rgba(255,158,196,.06); border:1px dashed rgba(255,158,196,.4); font-family: var(--hand); font-size:1.15rem; color: var(--blush-soft); }
+  .ow-env:hover{ background: rgba(255,158,196,.14); }
+  .ow-env.big{ border-style: solid; border-color: var(--gold); color: var(--gold); font-size:1.3rem; }
+  .card-detail#ow-detail p{ text-align:left; }
+
+  /* ---------- 06 soundtrack ---------- */
+  .player{ display:flex; align-items:center; gap:1.2rem; background: rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:.8rem 1.4rem .8rem .8rem; }
+  .vinyl{ width:56px; height:56px; border-radius:50%; background: repeating-radial-gradient(circle, #1a1a1a 0 2px, #2b2b2b 2px 4px); position:relative; flex:none; }
+  .vinyl::after{ content:''; position:absolute; inset:0; margin:auto; width:15px; height:15px; border-radius:50%; background: var(--pink-hot); }
+  .vinyl.spin{ animation: spin 3s linear infinite; }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .player .info{ text-align:left; }
+  .player .info .t{ font-family:var(--serif); font-size:1.02rem; }
+  .player .info .a{ font-size:.78rem; color: var(--lilac); }
+  .play-toggle{ background: var(--pink-hot); color: #3a1a34; border-radius:50%; width:36px; height:36px; font-size:1rem; }
+
+  /* ---------- 07 us in numbers ---------- */
+  .stat-grid{ display:flex; flex-wrap:wrap; gap: 1.4rem 2.2rem; justify-content:center; max-width: 560px; }
+  .stat{ display:flex; flex-direction:column; align-items:center; gap:.2rem; }
+  .stat .n{ font-family: var(--serif); font-size:1.7rem; color: var(--blush); }
+  .stat .l{ font-size:.85rem; color: var(--blush-soft); }
+
+  /* ---------- 08 then & now ---------- */
+  .then-now{ display:flex; gap: 2rem; flex-wrap:wrap; justify-content:center; max-width: 720px; }
+  .tn-col{ flex: 1 1 260px; padding: 1.6rem; background: rgba(255,158,196,.06); border:1px solid rgba(255,158,196,.22); border-radius: 16px; }
+  .tn-col .k{ font-family: var(--hand); color: var(--blush); font-size:1.3rem; }
+
+  /* ---------- 09 wishes ---------- */
+  .wish-list{ display:flex; flex-direction:column; gap: .7rem; max-width: 380px; }
+  .wish{ font-family: var(--serif); font-size:1.15rem; opacity:0; transform: translateY(10px); transition: opacity .6s ease, transform .6s ease; }
+  .wish.in{ opacity:1; transform: translateY(0); }
+
+  /* ---------- secret ---------- */
+  .secret-heart{ position:fixed; z-index:30; font-size:1.05rem; background:none; color: rgba(255,158,196,.35); animation: heart-pulse 2.4s ease-in-out infinite; }
+  @keyframes heart-pulse{ 0%,100%{ opacity:.3;} 50%{ opacity:.75;} }
+  .secret-modal{ position:fixed; inset:0; background: rgba(23,14,34,.92); z-index:60; display:none; align-items:center; justify-content:center; padding:1.5rem; }
+  .secret-modal.show{ display:flex; }
+  .secret-modal .box{ max-width:420px; text-align:center; }
+
+  /* ---------- final ---------- */
+  #final{ background: radial-gradient(ellipse at 50% 30%, #4a1f45, var(--night-1) 70%); }
+  #final .sign{ font-family: var(--hand); color: var(--gold); font-size:1.4rem; margin-top:1.2rem; }
+
+  ::selection{ background: var(--blush); color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div id="stars-bg"><canvas id="star-canvas"></canvas></div>
+
+<!-- ============================================================
+     00 — COVER
+     ============================================================ -->
+<section id="cover">
+  <div class="deco-row">✦ ♡ ✦</div>
+  <div class="kicker" id="cover-kicker"></div>
+  <h1 id="cover-title">OUR<br>ANNIVERSARY</h1>
+  <p class="sub" id="cover-sub">a little celebration of us ♡</p>
+  <button class="glow-btn" onclick="scrollToId('gift')">open gift</button>
+  <div class="deco-row">✦ · ✦ · ✦</div>
+</section>
+
+<!-- ============================================================
+     01 — THE GIFT
+     ============================================================ -->
+<section id="gift">
+  <p class="eyebrow-note">a little something</p>
+  <div class="gift-box fade-target" onclick="openGift()">🎀</div>
+  <p id="gift-hint">tap the ribbon</p>
+  <div class="gift-reveal" id="gift-reveal">
+    <h2 id="gift-line1"></h2>
+    <p id="gift-line2"></p>
+    <button class="ghost-btn" onclick="scrollToId('story')">continue →</button>
+  </div>
+</section>
+
+<!-- ============================================================
+     02 — OUR STORY
+     ============================================================ -->
+<section id="story">
+  <p class="eyebrow-note">the main event</p>
+  <h2>Our Story</h2>
+  <div class="story-line" id="story-line"></div>
+  <div class="story-detail" id="story-detail"></div>
+</section>
+
+<!-- ============================================================
+     03 — ALL THE LITTLE THINGS
+     ============================================================ -->
+<section id="little-things">
+  <p class="eyebrow-note">it's not just the big moments</p>
+  <h2>All The Little Things</h2>
+  <div class="card-field" id="card-field"></div>
+  <div class="card-detail" id="card-detail"></div>
+</section>
+
+<!-- ============================================================
+     04 — OUR MEMORIES
+     ============================================================ -->
+<section id="memories">
+  <p class="eyebrow-note">little pieces of us</p>
+  <h2>Our Memories</h2>
+  <div class="polaroid-field" id="polaroid-field"></div>
+</section>
+<div class="memory-modal" id="memory-modal">
+  <div class="box">
+    <button class="close-x" onclick="closeMemory()">✕</button>
+    <div class="shot-big" id="mm-shot"></div>
+    <div class="feeling" id="mm-feeling"></div>
+    <div class="memtext" id="mm-text"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     05 — LETTERS TO YOU
+     ============================================================ -->
+<section id="letters">
+  <p class="eyebrow-note">a few for later</p>
+  <h2>Letters To You</h2>
+  <div class="ow-field" id="ow-field"></div>
+  <div class="card-detail" id="ow-detail"></div>
+</section>
+
+<!-- ============================================================
+     06 — OUR SOUNDTRACK
+     ============================================================ -->
+<section id="soundtrack">
+  <p class="eyebrow-note">if our relationship had a soundtrack...</p>
+  <h2>Our Soundtrack</h2>
+  <div class="player">
+    <div class="vinyl" id="vinyl"></div>
+    <div class="info">
+      <div class="t" id="song-title"></div>
+      <div class="a" id="song-artist"></div>
+    </div>
+    <button class="play-toggle" id="play-btn" onclick="toggleSong()">▶</button>
+  </div>
+  <p id="song-note"></p>
+  <audio id="audio-el" preload="none"></audio>
+</section>
+
+<!-- ============================================================
+     07 — US IN NUMBERS
+     ============================================================ -->
+<section id="numbers">
+  <p class="eyebrow-note">♡ us ♡</p>
+  <div class="stat-grid" id="stat-grid"></div>
+  <p class="serif-line" id="numbers-footer" style="margin-top:2rem;"></p>
+</section>
+
+<!-- ============================================================
+     08 — THEN & NOW
+     ============================================================ -->
+<section id="then-now">
+  <h2>Then &amp; Now</h2>
+  <div class="then-now">
+    <div class="tn-col">
+      <div class="k">then</div>
+      <p id="then-text"></p>
+    </div>
+    <div class="tn-col">
+      <div class="k">now</div>
+      <p id="now-text"></p>
+    </div>
+  </div>
+  <p class="serif-line" id="then-now-footer" style="margin-top:1.8rem;"></p>
+</section>
+
+<!-- ============================================================
+     09 — WHAT I WISH FOR US
+     ============================================================ -->
+<section id="wishes">
+  <p class="eyebrow-note">nothing too serious, just...</p>
+  <h2>What I Wish For Us</h2>
+  <div class="wish-list" id="wish-list"></div>
+</section>
+
+<!-- ============================================================
+     10 — FINAL
+     ============================================================ -->
+<section id="final">
+  <div class="fade-target" id="final-fade">
+    <h1 id="final-line1"></h1>
+    <p id="final-line2"></p>
+    <p class="serif-line" id="final-line3"></p>
+    <p class="serif-line" id="final-line4"></p>
+    <div class="sign" id="final-sign"></div>
+    <button class="ghost-btn" onclick="replay()">♡ replay our story</button>
+  </div>
+</section>
+
+<div class="secret-modal" id="secret-modal">
+  <div class="box">
+    <p class="eyebrow-note">you found my secret 🔐</p>
+    <p class="serif-line" id="secret-l1"></p>
+    <p id="secret-l2"></p>
+    <button class="ghost-btn" onclick="closeSecret()">close ♡</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   EDIT ME — everything personal lives here.
+   Replace every placeholder with your own words, photos, and dates.
+   ============================================================ */
+const CONFIG = {
+  cover: {
+    kicker: "HAPPY ANNIVERSARY",
+    title: "OUR<br>ANNIVERSARY",
+    sub: "a little celebration of us ♡"
+  },
+
+  gift: {
+    line1: "Happy Anniversary, my love. ♡",
+    line2: "This isn't just a website. It's a little collection of us."
+  },
+
+  // Fill in the actual moments whenever you're ready — dates are optional.
+  story: [
+    { title: "The Beginning", message: "Add the story of how you met, or how it started, here." },
+    { title: "Our Firsts", message: "First date, first trip, first inside joke — whatever firsts you want to remember." },
+    { title: "Our Memories", message: "A line about the season of memories you've built together so far." },
+    { title: "Where We Are", message: "A line about where things stand now, and what this year has felt like." },
+    { title: "What Comes Next", message: "A line about what you're looking forward to together." }
+  ],
+
+  littleThings: [
+    { emoji: "🌷", title: "Your smile", message: "Still the first thing I notice." },
+    { emoji: "😂", title: "Our stupid jokes", message: "The ones nobody else finds funny but us." },
+    { emoji: "🍜", title: "Our food trips", message: "Half our best memories somehow happened over a meal." },
+    { emoji: "📱", title: "Our random conversations", message: "About nothing in particular, at the worst possible hours, and I love them anyway." },
+    { emoji: "📸", title: "Our photos", message: "None of them are perfect and I wouldn't trade a single one." },
+    { emoji: "🧸", title: "Your cute habits", message: "The small things you do without noticing that I notice anyway." },
+    { emoji: "🌙", title: "Our late nights", message: "Some of my favorite versions of you show up after midnight." },
+    { emoji: "💌", title: "The little things you do", message: "You show love in ways you probably don't think are a big deal. They are." }
+  ],
+
+  // Add an `img` field (e.g. "images/first-date.jpg") once you have real photos.
+  memories: [
+    { emoji: "🍜", feeling: "Nervous, but good nervous.", text: "This picture isn't perfect, but I love it because it reminds me of that day." },
+    { emoji: "🌃", feeling: "Completely comfortable.", text: "We stayed way longer than we planned to. Neither of us wanted to leave." },
+    { emoji: "🚗", feeling: "Warm and a little sleepy.", text: "You fell asleep halfway through and I didn't want to wake you up." },
+    { emoji: "📸", feeling: "Just happy.", text: "Not a special occasion. Just a good day, which somehow made it special anyway." }
+  ],
+
+  letters: [
+    { label: "Open when you miss me", message: "Then close your eyes for a second — I'm already thinking about you too." },
+    { label: "Open when you're having a bad day", message: "This one day doesn't get to decide how the rest of your week goes. I've got you." },
+    { label: "Open when you need a smile", message: "Remember that time you [inside joke goes here]? Yeah. That." },
+    { label: "Open when you want to know how much you mean to me", message: "More than I've probably ever said out loud. This whole page is my attempt at saying it anyway." }
+  ],
+  anniversaryLetter: {
+    label: "Anniversary letter ♡",
+    message: "Happy anniversary. Thank you for every ordinary day that somehow became a memory, and for sticking around through the versions of me that weren't always easy to love. Here's to more of everything, with you."
+  },
+
+  song: {
+    title: "our song",
+    artist: "add the artist name",
+    src: "audio/our-song.mp3", // put your mp3 here; the player still works if it's missing
+    note: "This one will always remind me of us."
+  },
+
+  numbers: {
+    stats: [
+      { n: "∞", l: "memories" },
+      { n: "countless", l: "laughs" },
+      { n: "too many", l: "photos" },
+      { n: "countless", l: "conversations" },
+      { n: "1", l: "little universe" },
+      { n: "2", l: "people" },
+      { n: "1", l: "story" }
+    ],
+    footer: "and hopefully... many more chapters."
+  },
+
+  thenNow: {
+    then: "We didn't know where this would take us.",
+    now: "But look at us now. ♡",
+    footer: "And I wouldn't change the story."
+  },
+
+  wishes: [
+    "More random adventures.",
+    "More late-night conversations.",
+    "More pictures we almost delete. 😂",
+    "More food together.",
+    "More laughing at stupid things.",
+    "More memories.",
+    "More us. ♡"
+  ],
+
+  secret: {
+    line1: "Okay... since you found it...",
+    line2: "I just wanted one more place on this page that's just for you to find. That's all. I love you."
+  },
+
+  final: {
+    line1: "Happy Anniversary, my love. ♡",
+    line2: "Thank you for every little moment, every laugh, every memory, and every version of us we've created along the way.",
+    line3: "Here's to everything we've already shared...",
+    line4: "and everything still waiting for us. Our story isn't finished yet. ♡",
+    sign: `— ${"Huy"} ♡`
+  }
+};
+/* ============================================================
+   End of editable config. The rest wires it all up.
+   ============================================================ */
+
+function scrollToId(id){ document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
+
+/* ---------- starfield ---------- */
+(function(){
+  const canvas = document.getElementById('star-canvas');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = document.body.scrollHeight;
+    const count = Math.floor((canvas.width * canvas.height) / 9000);
+    stars = Array.from({length: Math.min(count, 260)}, () => ({
+      x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+      r: Math.random()*1.4 + 0.3, p: Math.random()*Math.PI*2, s: Math.random()*0.02 + 0.006
+    }));
+  }
+  function tick(t){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(const s of stars){
+      const alpha = 0.35 + 0.65*Math.abs(Math.sin(s.p + t*s.s));
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(246,241,234,${alpha})`; ctx.fill();
+    }
+    requestAnimationFrame(tick);
+  }
+  window.addEventListener('resize', resize);
+  window.addEventListener('load', ()=>{ resize(); requestAnimationFrame(tick); });
+  setTimeout(resize, 400);
+})();
+
+/* ---------- floating hearts, subtle and continuous ---------- */
+(function(){
+  const glyphs = ['♡','💗'];
+  function spawn(){
+    const el = document.createElement('div');
+    el.className = 'floaty-heart';
+    el.textContent = glyphs[Math.random() > 0.7 ? 1 : 0];
+    el.style.left = (Math.random()*94 + 3) + 'vw';
+    el.style.setProperty('--drift', (Math.random()*40 - 20) + 'px');
+    const duration = 9 + Math.random()*6;
+    el.style.animationDuration = duration + 's';
+    document.body.appendChild(el);
+    setTimeout(()=> el.remove(), duration*1000 + 200);
+  }
+  setInterval(spawn, 2600);
+  setTimeout(spawn, 800);
+})();
+
+/* ---------- cursor sparkle ---------- */
+let lastSpark = 0;
+document.addEventListener('mousemove', (e)=>{
+  const now = Date.now();
+  if(now - lastSpark < 220) return;
+  lastSpark = now;
+  const el = document.createElement('div');
+  el.className = 'cursor-spark';
+  el.textContent = Math.random() > 0.5 ? '♡' : '✦';
+  el.style.left = (e.clientX + (Math.random()*10-5)) + 'px';
+  el.style.top = (e.clientY + (Math.random()*10-5)) + 'px';
+  document.body.appendChild(el);
+  setTimeout(()=> el.remove(), 900);
+});
+
+/* ---------- cover ---------- */
+document.getElementById('cover-kicker').textContent = CONFIG.cover.kicker;
+document.getElementById('cover-title').innerHTML = CONFIG.cover.title;
+document.getElementById('cover-sub').textContent = CONFIG.cover.sub;
+
+/* ---------- gift ---------- */
+let giftOpened = false;
+function openGift(){
+  if(giftOpened) return;
+  giftOpened = true;
+  document.getElementById('gift-hint').style.display = 'none';
+  document.getElementById('gift-line1').textContent = CONFIG.gift.line1;
+  document.getElementById('gift-line2').textContent = CONFIG.gift.line2;
+  document.getElementById('gift-reveal').classList.add('show');
+}
+
+/* ---------- our story ---------- */
+const storyLine = document.getElementById('story-line');
+const storyDetail = document.getElementById('story-detail');
+CONFIG.story.forEach((s, idx)=>{
+  const node = document.createElement('button');
+  node.className = 'story-node';
+  node.textContent = s.title;
+  node.onclick = ()=>{
+    storyDetail.innerHTML = `<div class="head">${s.title} ♡</div><p>${s.message}</p>`;
+    storyDetail.classList.add('show');
+  };
+  storyLine.appendChild(node);
+  if(idx < CONFIG.story.length - 1){
+    const c = document.createElement('div');
+    c.className = 'story-connector';
+    c.textContent = '♡';
+    storyLine.appendChild(c);
+  }
+});
+
+/* ---------- little things cards ---------- */
+const cardField = document.getElementById('card-field');
+const cardDetail = document.getElementById('card-detail');
+CONFIG.littleThings.forEach((c)=>{
+  const el = document.createElement('button');
+  el.className = 'love-card';
+  el.innerHTML = `<div class="emo">${c.emoji}</div><div class="title">${c.title}</div>`;
+  el.onclick = ()=>{
+    cardDetail.innerHTML = `<div class="head">${c.title} ${c.emoji}</div><p>${c.message}</p>`;
+    cardDetail.classList.add('show');
+    cardDetail.scrollIntoView({behavior:'smooth', block:'center'});
+  };
+  cardField.appendChild(el);
+});
+
+/* ---------- memories ---------- */
+const polaroidField = document.getElementById('polaroid-field');
+CONFIG.memories.forEach((m, idx)=>{
+  const el = document.createElement('div');
+  el.className = 'polaroid';
+  el.style.setProperty('--r', (idx % 2 === 0 ? -4 - idx : 4 + idx) + 'deg');
+  const shot = m.img
+    ? `<img class="shot" src="${m.img}" alt="memory" onerror="this.outerHTML='<div class=&quot;placeholder-shot&quot;>${m.emoji}</div>'">`
+    : `<div class="placeholder-shot">${m.emoji}</div>`;
+  el.innerHTML = `${shot}<span class="cap">${m.emoji}</span>`;
+  el.onclick = ()=> openMemory(m);
+  polaroidField.appendChild(el);
+});
+function openMemory(m){
+  document.getElementById('mm-shot').innerHTML = m.img
+    ? `<img src="${m.img}" style="width:100%;height:100%;object-fit:cover;border-radius:6px" onerror="this.parentElement.innerHTML='${m.emoji}'">`
+    : m.emoji;
+  document.getElementById('mm-feeling').textContent = `felt like: ${m.feeling}`;
+  document.getElementById('mm-text').textContent = m.text;
+  document.getElementById('memory-modal').classList.add('show');
+}
+function closeMemory(){ document.getElementById('memory-modal').classList.remove('show'); }
+
+/* ---------- letters ---------- */
+const owField = document.getElementById('ow-field');
+const owDetail = document.getElementById('ow-detail');
+CONFIG.letters.forEach((o)=>{
+  const el = document.createElement('button');
+  el.className = 'ow-env';
+  el.textContent = `💌 ${o.label}`;
+  el.onclick = ()=>{
+    owDetail.innerHTML = `<div class="head">${o.label}</div><p>${o.message}</p>`;
+    owDetail.classList.add('show');
+  };
+  owField.appendChild(el);
+});
+const bigEl = document.createElement('button');
+bigEl.className = 'ow-env big';
+bigEl.textContent = `💌 ${CONFIG.anniversaryLetter.label}`;
+bigEl.onclick = ()=>{
+  owDetail.innerHTML = `<div class="head">${CONFIG.anniversaryLetter.label}</div><p>${CONFIG.anniversaryLetter.message}</p>`;
+  owDetail.classList.add('show');
+};
+owField.appendChild(bigEl);
+
+/* ---------- soundtrack ---------- */
+document.getElementById('song-title').textContent = CONFIG.song.title;
+document.getElementById('song-artist').textContent = CONFIG.song.artist;
+document.getElementById('song-note').textContent = CONFIG.song.note;
+const audioEl = document.getElementById('audio-el');
+audioEl.src = CONFIG.song.src;
+let playing = false;
+function toggleSong(){
+  const btn = document.getElementById('play-btn');
+  const vinyl = document.getElementById('vinyl');
+  if(!playing){
+    audioEl.play().catch(()=>{ /* file missing until you add one — vinyl still spins */ });
+    playing = true; btn.textContent = '⏸'; vinyl.classList.add('spin');
+  } else {
+    audioEl.pause(); playing = false; btn.textContent = '▶'; vinyl.classList.remove('spin');
+  }
+}
+
+/* ---------- us in numbers ---------- */
+const statGrid = document.getElementById('stat-grid');
+CONFIG.numbers.stats.forEach(s=>{
+  const el = document.createElement('div');
+  el.className = 'stat';
+  el.innerHTML = `<div class="n">${s.n}</div><div class="l">${s.l}</div>`;
+  statGrid.appendChild(el);
+});
+document.getElementById('numbers-footer').textContent = CONFIG.numbers.footer;
+
+/* ---------- then & now ---------- */
+document.getElementById('then-text').textContent = CONFIG.thenNow.then;
+document.getElementById('now-text').textContent = CONFIG.thenNow.now;
+document.getElementById('then-now-footer').textContent = CONFIG.thenNow.footer;
+
+/* ---------- wishes (reveal on scroll) ---------- */
+const wishList = document.getElementById('wish-list');
+CONFIG.wishes.forEach(w=>{
+  const el = document.createElement('div');
+  el.className = 'wish';
+  el.textContent = w;
+  wishList.appendChild(el);
+});
+
+/* ---------- secret heart ---------- */
+(function placeSecretHeart(){
+  const heart = document.createElement('button');
+  heart.className = 'secret-heart';
+  heart.textContent = '♡';
+  heart.style.top = '42vh';
+  heart.style.left = '7%';
+  heart.onclick = ()=>{
+    document.getElementById('secret-l1').textContent = CONFIG.secret.line1;
+    document.getElementById('secret-l2').textContent = CONFIG.secret.line2;
+    document.getElementById('secret-modal').classList.add('show');
+  };
+  document.body.appendChild(heart);
+})();
+function closeSecret(){ document.getElementById('secret-modal').classList.remove('show'); }
+
+/* ---------- final ---------- */
+document.getElementById('final-line1').textContent = CONFIG.final.line1;
+document.getElementById('final-line2').textContent = CONFIG.final.line2;
+document.getElementById('final-line3').textContent = CONFIG.final.line3;
+document.getElementById('final-line4').textContent = CONFIG.final.line4;
+document.getElementById('final-sign').textContent = CONFIG.final.sign;
+function replay(){ window.scrollTo({top:0, behavior:'smooth'}); }
+
+/* ---------- fade-ins on scroll ---------- */
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+}, {threshold: 0.3});
+document.querySelectorAll('.fade-target, .wish').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
